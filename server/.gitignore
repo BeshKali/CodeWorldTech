@@ -1,0 +1,19 @@
+
+# DukaMkononi/.gitignore
+
+# Environment Variables
+.env
+*.env
+.env.*
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Firebase Admin Key
+**firebase.json # Add the actual filename here
+firebase.json
+# Build Folders (if applicable)
+dist/
+build/
