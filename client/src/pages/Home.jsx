@@ -1,182 +1,267 @@
 // src/pages/Home.jsx
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { FiPlayCircle, FiX } from 'react-icons/fi'; // Icons for play and close
+import { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { FiPlay, FiX, FiCpu, FiGlobe, FiZap, FiActivity } from 'react-icons/fi';
 
-const pageVariants = {
-  initial: { opacity: 0, y: 50 },
-  animate: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.8,
-      ease: [0.6, -0.05, 0.01, 0.99],
-      staggerChildren: 0.2,
-    },
-  },
-  exit: { opacity: 0, y: -50, transition: { duration: 0.5 } },
-};
+// --- Components ---
 
-const textChildVariants = {
-  initial: { opacity: 0, y: 30 },
-  animate: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100 } },
-};
+// 3D Tilt Wrapper Component
+const TiltCard = ({ children }) => {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const mouseXSpring = useSpring(x);
+  const mouseYSpring = useSpring(y);
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["10deg", "-10deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-10deg", "10deg"]);
 
-const videoPlaceholderVariants = {
-  initial: { opacity: 0, y: 30, scale: 0.95 },
-  animate: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 100 } },
-  hover: {
-    scale: 1.03,
-    boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.2)",
-    transition: { type: 'spring', stiffness: 300, damping: 15 }
-  }
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    x.set(mouseX / width - 0.5);
+    y.set(mouseY / height - 0.5);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  return (
+    <motion.div
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+      className="relative w-full"
+    >
+      {children}
+    </motion.div>
+  );
 };
 
 const Home = () => {
   const [isVideoOpen, setVideoOpen] = useState(false);
-  // Replace with your actual YouTube video ID
-  const videoId = "JODVpeexrlY"; // Example: A video about tech in Africa
-  // https://youtu.be/JODVpeexrlY
+  const [stats, setStats] = useState({ users: 1240, uptime: 99.9 });
+
+  // Simulate real-time data updates
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStats(prev => ({
+        users: prev.users + Math.floor(Math.random() * 5),
+        uptime: 99.9 + (Math.random() * 0.09)
+      }));
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <motion.section
-      className="min-h-screen flex flex-col items-center justify-center text-center py-16 sm:py-24 px-4 
-                 dark:bg-gray-900 bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-700 text-white relative overflow-hidden"
-      variants={pageVariants}
-      initial="initial"
-      animate="animate"
-      exit="exit"
-    >
-      {/* Subtle animated background elements */}
-      {Array.from({ length: 10 }).map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute rounded-full opacity-10 dark:opacity-5"
-          style={{
-            width: Math.random() * 100 + 50,
-            height: Math.random() * 100 + 50,
-            backgroundColor: `rgba(255, 255, 255, ${Math.random() * 0.2 + 0.05})`,
-            top: `${Math.random() * 100}%`,
-            left: `${Math.random() * 100}%`,
-            zIndex: 0,
-          }}
-          animate={{
-            x: [0, Math.random() * 50 - 25, 0],
-            y: [0, Math.random() * 50 - 25, 0],
-            scale: [1, 1.1 + Math.random() * 0.3, 1],
-          }}
-          transition={{
-            duration: Math.random() * 10 + 10,
-            repeat: Infinity,
-            repeatType: 'mirror',
-            ease: 'easeInOut',
-          }}
+    className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden 
+               transition-colors duration-500
+               bg-white text-gray-900 
+               dark:bg-[#030303] dark:text-white" // <--- Use dynamic colors here
+  >
+    {/* Update your Grid Background to be subtle in light mode */}
+    <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 
+        bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] 
+        dark:bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] 
+        bg-[size:40px_40px]" 
+      />
+    </div>
+      {/* --- FUTURISTIC BACKGROUND --- */}
+      <div className="absolute inset-0 z-0">
+        {/* Animated Grid */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+        
+        {/* Glowing Orbs */}
+        <motion.div 
+          animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.3, 0.2] }}
+          transition={{ duration: 8, repeat: Infinity }}
+          className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-600/20 rounded-full blur-[120px]" 
         />
-      ))}
+        <motion.div 
+          animate={{ scale: [1.2, 1, 1.2], opacity: [0.1, 0.2, 0.1] }}
+          transition={{ duration: 10, repeat: Infinity }}
+          className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-purple-600/20 rounded-full blur-[120px]" 
+        />
+      </div>
 
-      <div className="relative z-10 flex flex-col items-center"> {/* Main content container */}
-        <motion.h1
-          className="text-5xl sm:text-6xl md:text-7xl font-extrabold mb-6 tracking-tight"
-          style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}
-          variants={textChildVariants}
+      {/* --- TOP NAV SHOWCASE (REAL TIME) --- */}
+      <div className="absolute top-8 left-0 w-full px-8 flex justify-between items-center z-50 mix-blend-difference opacity-70">
+        <div className="flex items-center gap-4 text-xs tracking-[0.2em] font-bold">
+          <FiActivity className="text-cyan-400 animate-pulse" />
+          SYSTEM_LIVE: {stats.uptime.toFixed(2)}%
+        </div>
+        <div className="flex items-center gap-4 text-xs tracking-[0.2em] font-bold">
+          ACTIVE_NODES: {stats.users.toLocaleString()}
+        </div>
+      </div>
+
+      {/* --- MAIN CONTENT --- */}
+      <div className="relative z-10 w-full max-w-7xl px-6 pt-20 flex flex-col items-center">
+        
+        {/* Badge */}
+        <motion.div 
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="px-4 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md mb-8 flex items-center gap-2"
         >
-          Build Smarter,
-          <br />
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-yellow-300 via-pink-400 to-red-400">
-            Ship Faster
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+          </span>
+          <span className="text-[10px] uppercase tracking-widest font-bold text-cyan-400">Next-Gen Deployment</span>
+        </motion.div>
+
+        {/* Headline */}
+        <motion.h1 
+          className="text-6xl md:text-8xl lg:text-9xl font-black text-center mb-8 leading-[0.9] tracking-tighter"
+          initial={{ y: 40, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        >
+          CODEWORLD <br />
+          <span className="bg-clip-text text-transparent bg-gradient-to-b from-white to-white/40">
+            TECHNOLOGIES
           </span>
         </motion.h1>
-        <motion.p
-          className="text-xl sm:text-2xl max-w-xl mx-auto mb-10 leading-relaxed"
-          variants={textChildVariants}
+
+        {/* Description */}
+        <motion.p 
+          className="max-w-2xl text-center text-gray-400 text-lg md:text-xl mb-12 font-light leading-relaxed"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
         >
-          We craft cutting-edge technology solutions that empower your vision and accelerate your growth.
+          Deploy scalable architecture with a futuristic stack. Optimized for 
+          real-time performance and unmatched visual fidelity.
         </motion.p>
-        <motion.div variants={textChildVariants} className="mb-12 sm:mb-16">
+
+        {/* Buttons */}
+        <motion.div 
+          className="flex flex-wrap justify-center gap-6 mb-24"
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.6 }}
+        >
           <motion.button
-            className="bg-white text-blue-600 font-semibold py-3 px-8 rounded-lg shadow-lg
-                       hover:bg-gray-100 transition-all duration-300 text-lg"
-            whileHover={{ scale: 1.1, boxShadow: "0px 10px 20px rgba(0,0,0,0.2)" }}
+            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => {/* Potentially scroll to services or contact */}}
+            className="group relative px-8 py-4 bg-white text-black font-bold rounded-full overflow-hidden transition-all"
           >
-            Discover Our Solutions
+            <span className="relative z-10">START PROJECT</span>
+            <div className="absolute inset-0 bg-cyan-400 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+          </motion.button>
+          
+          <motion.button
+            whileHover={{ backgroundColor: "rgba(255,255,255,0.1)" }}
+            className="px-8 py-4 border border-white/20 rounded-full font-bold backdrop-blur-sm transition-all"
+          >
+            VIEW BLUEPRINTS
           </motion.button>
         </motion.div>
 
-        {/* --- African Tech Video Section --- */}
-        <motion.div className="w-full max-w-3xl" variants={textChildVariants}>
-          <motion.h2
-            className="text-2xl sm:text-3xl font-semibold mb-4 sm:mb-6 text-white/90"
-            variants={textChildVariants} // Can use same variant or a new one if delay needed
-          >
-            Spotlight: <span className="bg-clip-text text-transparent bg-gradient-to-r from-green-300 via-teal-400 to-cyan-400">African Tech in Motion</span>
-          </motion.h2>
-          <motion.div
-            className="relative aspect-video bg-black/30 dark:bg-black/50 rounded-xl shadow-2xl overflow-hidden cursor-pointer group perspective-800px"
-            onClick={() => setVideoOpen(true)}
-            variants={videoPlaceholderVariants} // Use specific variants for the placeholder
-            initial="initial" // Ensure variants are applied
-            animate="animate"
-            whileHover="hover"
-          >
-            {/* Replace with your actual video thumbnail */}
-            <img
-              src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
-              alt="African Tech Showcase Thumbnail"
-              className="w-full h-full object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-80 group-hover:opacity-50 transition-opacity duration-300"></div>
-            <div className="absolute inset-0 flex flex-col items-center justify-center transition-all duration-300 group-hover:backdrop-blur-sm">
-              <FiPlayCircle
-                size={window.innerWidth < 640 ? 60 : 80}
-                className="text-white/80 group-hover:text-white transition-all duration-300 transform group-hover:scale-110"
-              />
-              <p className="mt-2 text-sm sm:text-base font-medium text-white/80 group-hover:text-white">Watch Showcase</p>
-            </div>
-          </motion.div>
-        </motion.div>
-        {/* --- End African Tech Video Section --- */}
+        {/* --- 3D SHOWCASE VIDEO SECTION --- */}
+        <div className="w-full max-w-5xl perspective-1000">
+          <TiltCard>
+            <motion.div 
+              className="relative rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_50px_-12px_rgba(0,0,0,0.5)] bg-black/40 group cursor-pointer"
+              onClick={() => setVideoOpen(true)}
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.8 }}
+            >
+              {/* Scanning Line Animation */}
+              <div className="absolute inset-0 z-20 pointer-events-none overflow-hidden">
+                <motion.div 
+                  animate={{ top: ['-10%', '110%'] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                  className="absolute w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent shadow-[0_0_15px_cyan]"
+                />
+              </div>
 
+              {/* Video UI Overlays */}
+              <div className="absolute top-6 left-6 z-20 flex gap-2">
+                <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                <div className="text-[10px] font-mono text-white/50 uppercase tracking-widest">Live_Feed_01.mp4</div>
+              </div>
+
+              <img 
+                src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=2072" 
+                alt="Showcase"
+                className="w-full aspect-video object-cover opacity-60 group-hover:scale-105 transition-transform duration-700"
+              />
+
+              <div className="absolute inset-0 flex flex-col items-center justify-center z-20 bg-black/20 group-hover:bg-black/0 transition-colors">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-cyan-500 rounded-full blur-2xl opacity-0 group-hover:opacity-40 transition-opacity" />
+                  <div className="relative w-20 h-20 flex items-center justify-center border border-white/30 rounded-full backdrop-blur-md">
+                    <FiPlay className="ml-1 text-2xl" />
+                  </div>
+                </div>
+                <span className="mt-4 text-xs font-bold tracking-[0.3em] text-white/70">INITIATE SHOWCASE</span>
+              </div>
+
+              {/* Decorative Tech Corners */}
+              <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-cyan-500/50 rounded-tl-xl" />
+              <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-cyan-500/50 rounded-br-xl" />
+            </motion.div>
+          </TiltCard>
+        </div>
       </div>
 
-      {/* Video Modal */}
+      {/* --- FULLSCREEN VIDEO MODAL --- */}
       <AnimatePresence>
         {isVideoOpen && (
           <motion.div
-            className="fixed inset-0 bg-black/80 dark:bg-black/90 backdrop-blur-md flex items-center justify-center z-[100] p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setVideoOpen(false)} // Close on overlay click
-            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-2xl p-4 md:p-10"
+            onClick={() => setVideoOpen(false)}
           >
-            <motion.div
-              className="relative bg-black rounded-lg shadow-2xl w-full max-w-4xl aspect-video overflow-hidden"
-              initial={{ scale: 0.8, opacity: 0, y: 50 }}
-              animate={{ scale: 1, opacity: 1, y: 0, transition: { delay: 0.1, type: 'spring', stiffness: 150, damping: 20 } }}
-              exit={{ scale: 0.8, opacity: 0, y: 50, transition: { duration: 0.2 } }}
-              onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside video player
+            <motion.button 
+              className="absolute top-8 right-8 text-white/50 hover:text-white transition-colors"
+              whileHover={{ rotate: 90 }}
+            >
+              <FiX size={32} />
+            </motion.button>
+
+            <motion.div 
+              className="w-full max-w-6xl aspect-video rounded-3xl overflow-hidden border border-white/10 shadow-2xl"
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
             >
               <iframe
-                className="absolute top-0 left-0 w-full h-full border-0"
-                src={`https://www.youtube.com/embed/${videoId}?autoplay=1&modestbranding=1&rel=0`}
-                title="African Tech Showcase Video"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                className="w-full h-full"
+                src={`https://www.youtube.com/embed/JODVpeexrlY?autoplay=1`}
+                title="Futuristic Showcase"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
-              ></iframe>
-              <motion.button
-                onClick={() => setVideoOpen(false)}
-                className="absolute top-2 right-2 sm:top-3 sm:right-3 bg-white/10 hover:bg-white/30 text-white rounded-full p-2 z-10 transition-colors"
-                aria-label="Close video"
-                whileHover={{ scale: 1.1, rotate: 90 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <FiX size={window.innerWidth < 640 ? 18 : 24} />
-              </motion.button>
+              />
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* --- FOOTER ELEMENTS --- */}
+      <div className="relative z-10 w-full px-12 py-12 flex flex-wrap justify-center gap-12 mt-20 border-t border-white/5 bg-white/[0.02]">
+        {[
+          { icon: <FiGlobe />, label: "Global Edge" },
+          { icon: <FiCpu />, label: "Neural Processing" },
+          { icon: <FiZap />, label: "Instant Sync" }
+        ].map((item, i) => (
+          <div key={i} className="flex items-center gap-3 text-white/40 grayscale hover:grayscale-0 hover:text-cyan-400 transition-all cursor-crosshair">
+            {item.icon}
+            <span className="text-[10px] uppercase font-bold tracking-widest">{item.label}</span>
+          </div>
+        ))}
+      </div>
     </motion.section>
   );
 };

@@ -1,31 +1,64 @@
 // src/pages/Projects.jsx
-import { motion } from 'framer-motion';
-import { FiExternalLink, FiGithub } from 'react-icons/fi'; // Example icons
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { FiExternalLink, FiGithub, FiLayers, FiActivity, FiBox, FiCpu } from 'react-icons/fi';
+
+// --- 3D Tilt Component (Consistent across the app) ---
+const ProjectTiltCard = ({ children }) => {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const mouseXSpring = useSpring(x);
+  const mouseYSpring = useSpring(y);
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["10deg", "-10deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-10deg", "10deg"]);
+
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    x.set((e.clientX - rect.left) / rect.width - 0.5);
+    y.set((e.clientY - rect.top) / rect.height - 0.5);
+  };
+
+  return (
+    <motion.div
+      onMouseMove={handleMouseMove}
+      onMouseLeave={() => { x.set(0); y.set(0); }}
+      style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+      className="relative w-full h-full"
+    >
+      {children}
+    </motion.div>
+  );
+};
 
 const projects = [
   {
     title: "Mifugo Smart",
-    desc: "A livestock management system for farmers. Tracks health, breeding, and market prices to optimize productivity and profitability.",
+    id: "MOD_001",
+    desc: "AI-driven livestock management system. Optimizing productivity through predictive health analytics and real-time market integration.",
     stack: ["React", "Node.js", "M-Pesa API", "MongoDB"],
-    imageUrl: "https://images.unsplash.com/photo-1522199755839-a2bacb67c546?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHdlYiUyMGFwcHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60", // Replace with actual image
-    liveLink: "#", // Replace with actual link
-    repoLink: "#", // Replace with actual link
+    imageUrl: "https://images.unsplash.com/photo-1522199755839-a2bacb67c546?auto=format&fit=crop&w=800&q=80",
+    liveLink: "#",
+    repoLink: "#",
+    status: "98% Optimized"
   },
   {
     title: "CareConnect",
-    desc: "Intelligent health chatbot leveraging AI and Twilio for instant patient support and appointment scheduling. Enhances patient engagement and clinic efficiency.",
+    id: "MOD_002",
+    desc: "Neural-support chatbot interface leveraging Twilio and NLP to bridge the gap between patient urgency and clinical response.",
     stack: ["Python", "Dialogflow", "Twilio", "Firebase"],
-    imageUrl: "https://images.unsplash.com/photo-1584515933487-779824d29309?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8aGVhbHRoY2FyZSUyMHRlY2h8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60",
+    imageUrl: "https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=800&q=80",
     liveLink: "#",
     repoLink: "#",
+    status: "Active Uplink"
   },
   {
     title: "Farmily",
-    desc: "A transparent marketplace connecting farmers directly with customers. Promotes fair trade practices and provides real-time crop information.",
+    id: "MOD_003",
+    desc: "Decentralized marketplace infrastructure connecting primary producers to urban consumer hubs with transparent pricing protocols.",
     stack: ["Vue.js", "Django", "PostgreSQL", "Leaflet.js"],
-    imageUrl: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YWdyaWN1bHR1cmV8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60",
+    imageUrl: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&w=800&q=80",
     liveLink: "#",
     repoLink: "#",
+    status: "Deployed"
   },
 ];
 
@@ -33,89 +66,153 @@ const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.2, delayChildren: 0.1 },
+    transition: { staggerChildren: 0.15, delayChildren: 0.2 },
   },
-};
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 50, scale: 0.9 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: { type: 'spring', stiffness: 100, damping: 15 },
-  },
-  hover: {
-    scale: 1.03,
-    boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.1)",
-    y: -5,
-    // For a subtle 3D tilt:
-    // rotateX: 5,
-    // rotateY: -5,
-    transition: { type: 'spring', stiffness: 200, damping: 10 }
-  }
 };
 
 const Projects = () => (
-  <motion.section
-    className="py-28 px-4 sm:px-8 bg-gray-50 dark:bg-gray-900" // Added py-28 for fixed navbar
-    variants={containerVariants}
-    initial="hidden"
-    animate="visible"
-  >
-    <div className="max-w-6xl mx-auto">
-      <motion.h2
-        className="text-4xl md:text-5xl font-bold mb-12 text-center text-gray-800 dark:text-white"
-        variants={{ hidden: { opacity: 0, y:20 }, visible: { opacity:1, y:0 }}}
-      >
-        Our Projects
-      </motion.h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<motion.section
+  className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden 
+             transition-colors duration-500
+             bg-white text-gray-900 
+             dark:bg-[#030303] dark:text-white" // <--- Use dynamic colors here
+>
+  {/* Update your Grid Background to be subtle in light mode */}
+  <div className="absolute inset-0 z-0">
+    <div className="absolute inset-0 
+      bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] 
+      dark:bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] 
+      bg-[size:40px_40px]" 
+    />
+  </div>
+    {/* --- BACKGROUND GRAPHICS --- */}
+    <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:80px_80px]" />
+      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-blue-500/5 via-transparent to-purple-500/5" />
+    </div>
+
+    <div className="relative z-10 max-w-7xl mx-auto">
+      
+      {/* --- HEADER --- */}
+      <div className="text-center mb-20">
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-500/30 bg-cyan-500/5 mb-6"
+        >
+          <FiLayers className="text-cyan-400 text-xs" />
+          <span className="text-[10px] font-mono tracking-[0.4em] text-cyan-400 uppercase">Core_Modules_Archive</span>
+        </motion.div>
+        
+        <motion.h2
+          className="text-5xl md:text-7xl font-black tracking-tighter mb-4"
+          variants={{ hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1 }}}
+        >
+          ENGINEERED <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">IMPACT</span>
+        </motion.h2>
+        <motion.p className="text-gray-500 max-w-xl mx-auto font-light text-lg">
+          A catalogue of high-performance digital solutions designed for scalability and market resilience.
+        </motion.p>
+      </div>
+
+      {/* --- PROJECT GRID --- */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
         {projects.map((project, index) => (
-          <motion.div
-            key={index}
-            className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden flex flex-col transform-style-preserve-3d" // preserve-3d for potential inner 3D
-            variants={cardVariants}
-            whileHover="hover"
-          >
-            <img src={project.imageUrl} alt={project.title} className="w-full h-56 object-cover"/>
-            <div className="p-6 flex flex-col flex-grow">
-              <h3 className="text-2xl font-semibold mb-2 text-blue-600 dark:text-blue-400">{project.title}</h3>
-              <p className="text-gray-700 dark:text-gray-300 mb-4 text-sm leading-relaxed flex-grow">{project.desc}</p>
-              <div className="mb-4">
-                <h4 className="text-xs font-semibold uppercase text-gray-500 dark:text-gray-400 mb-1">Tech Stack:</h4>
-                <div className="flex flex-wrap gap-2">
-                  {project.stack.map(tech => (
-                    <span key={tech} className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs rounded-full">
-                      {tech}
-                    </span>
-                  ))}
+          <ProjectTiltCard key={index}>
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: 30 },
+                visible: { opacity: 1, y: 0 }
+              }}
+              className="group relative h-full flex flex-col bg-[#0a0a0a] border border-white/10 rounded-2xl overflow-hidden hover:border-cyan-500/50 transition-colors duration-500 shadow-2xl"
+            >
+              {/* Image Viewport */}
+              <div className="relative h-52 overflow-hidden border-b border-white/10">
+                <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#0a0a0a] to-transparent opacity-60" />
+                
+                {/* HUD Elements */}
+                <div className="absolute top-4 left-4 z-20 flex flex-col gap-1">
+                  <div className="text-[8px] font-mono text-cyan-400/80 bg-black/40 px-2 py-0.5 rounded border border-cyan-500/20 backdrop-blur-md">
+                    SRC: {project.id}
+                  </div>
+                </div>
+                
+                <div className="absolute bottom-4 right-4 z-20">
+                    <div className="flex items-center gap-2 text-[8px] font-mono text-white/50 bg-black/40 px-2 py-1 rounded-full backdrop-blur-md">
+                        <FiActivity className="text-cyan-500 animate-pulse" /> {project.status}
+                    </div>
+                </div>
+
+                <img 
+                  src={project.imageUrl} 
+                  alt={project.title} 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 grayscale group-hover:grayscale-0"
+                />
+              </div>
+
+              {/* Content Box */}
+              <div className="p-8 flex flex-col flex-grow relative">
+                <h3 className="text-2xl font-bold mb-3 tracking-tight group-hover:text-cyan-400 transition-colors">
+                  {project.title}
+                </h3>
+                <p className="text-gray-400 text-sm leading-relaxed mb-6 flex-grow font-light">
+                  {project.desc}
+                </p>
+
+                {/* Tech Stack Modules */}
+                <div className="mb-8">
+                  <div className="flex flex-wrap gap-2">
+                    {project.stack.map(tech => (
+                      <span key={tech} className="px-2 py-1 bg-white/5 border border-white/10 text-white/60 text-[9px] font-bold uppercase tracking-widest rounded group-hover:border-cyan-500/30 group-hover:text-cyan-400 transition-all">
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Footer Actions */}
+                <div className="flex items-center gap-6 pt-6 border-t border-white/5">
+                  <motion.a
+                    href={project.liveLink}
+                    className="flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] uppercase text-cyan-500 hover:text-white transition-colors"
+                    whileHover={{ x: 3 }}
+                  >
+                    <FiBox /> Deployment
+                  </motion.a>
+                  <motion.a
+                    href={project.repoLink}
+                    className="flex items-center gap-2 text-[10px] font-bold tracking-[0.2em] uppercase text-gray-500 hover:text-white transition-colors"
+                    whileHover={{ x: 3 }}
+                  >
+                    <FiGithub /> Source
+                  </motion.a>
+                </div>
+
+                {/* Background ID Watermark */}
+                <div className="absolute -bottom-4 -right-4 text-7xl font-black text-white/[0.02] pointer-events-none select-none italic">
+                  {index + 1}
                 </div>
               </div>
-              <div className="mt-auto flex justify-start gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                {project.liveLink && project.liveLink !== "#" && (
-                  <motion.a
-                    href={project.liveLink} target="_blank" rel="noopener noreferrer"
-                    className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 flex items-center gap-1 text-sm font-medium"
-                    whileHover={{ scale: 1.1 }}
-                  >
-                    <FiExternalLink /> Live Demo
-                  </motion.a>
-                )}
-                {project.repoLink && project.repoLink !== "#" && (
-                  <motion.a
-                    href={project.repoLink} target="_blank" rel="noopener noreferrer"
-                    className="text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 flex items-center gap-1 text-sm font-medium"
-                    whileHover={{ scale: 1.1 }}
-                  >
-                    <FiGithub /> View Code
-                  </motion.a>
-                )}
-              </div>
-            </div>
-          </motion.div>
+
+              {/* Border Trace Animation (Hover) */}
+              <div className="absolute inset-0 border-2 border-cyan-500/0 group-hover:border-cyan-500/20 transition-all duration-500 rounded-2xl pointer-events-none" />
+            </motion.div>
+          </ProjectTiltCard>
         ))}
       </div>
+
+      {/* --- FOOTER CTA --- */}
+      <motion.div 
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        className="mt-24 text-center p-12 rounded-3xl border border-white/5 bg-gradient-to-b from-white/[0.02] to-transparent"
+      >
+        <FiCpu className="text-4xl text-gray-700 mx-auto mb-6" />
+        <h4 className="text-xl font-bold mb-4 italic">HAVE A SYSTEM TO BUILD?</h4>
+        <button className="px-8 py-3 bg-white text-black font-black text-xs tracking-widest uppercase rounded-full hover:bg-cyan-400 transition-colors">
+          Initialize Collaboration
+        </button>
+      </motion.div>
     </div>
   </motion.section>
 );

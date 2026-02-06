@@ -1,99 +1,202 @@
 // src/components/Testimonials.jsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiChevronLeft, FiChevronRight } from 'react-icons/fi'; // Using react-icons for better arrows
+import { FiChevronLeft, FiChevronRight, FiActivity, FiShield, FiTerminal } from 'react-icons/fi';
 
 const testimonials = [
-  { id: 1, name: "Grace M.", role: "Startup Founder", quote: "These guys turned my idea into a real, working app in just 2 weeks!", avatar: "https://img.freepik.com/free-photo/african-senior-woman_23-2148833112.jpg" },
-  { id: 2, name: "Moses T.", role: "Shop Owner", quote: "The POS system they built increased my sales tracking accuracy by 90%!", avatar: "https://img.freepik.com/free-photo/handsome-sensitive-man-portrait_23-2149509828.jpg" },
-  { id: 3, name: "Achieng L.", role: "Clinic Admin", quote: "Our health platform is now smooth and smart – patients love it!", avatar: "https://img.freepik.com/free-photo/medium-shot-beautiful-african-woman-posing_23-2151438119.jpg" },
+  { 
+    id: 1, 
+    name: "Grace M.", 
+    role: "Founder, NexaStream", 
+    quote: "The deployment speed was unprecedented. They turned a complex vision into a high-performance reality in record time.", 
+    avatar: "https://img.freepik.com/free-photo/african-senior-woman_23-2148833112.jpg",
+    signal: "98% Efficiency"
+  },
+  { 
+    id: 2, 
+    name: "Moses T.", 
+    role: "CTO, AgriPulse", 
+    quote: "The inventory logic and real-time analytics have completely transformed our operational oversight. Pure engineering brilliance.", 
+    avatar: "https://img.freepik.com/free-photo/handsome-sensitive-man-portrait_23-2149509828.jpg",
+    signal: "Verified Node"
+  },
+  { 
+    id: 3, 
+    name: "Achieng L.", 
+    role: "Admin, HealthBridge", 
+    quote: "Finally, a platform that understands the nuance of medical data security while maintaining a fluid user experience.", 
+    avatar: "https://img.freepik.com/free-photo/medium-shot-beautiful-african-woman-posing_23-2151438119.jpg",
+    signal: "Secured Uplink"
+  },
 ];
 
-const testimonialVariants = {
+const cardVariants = {
   enter: (direction) => ({
-    x: direction > 0 ? 300 : -300,
+    x: direction > 0 ? 500 : -500,
     opacity: 0,
-    scale: 0.8,
-    rotateY: direction > 0 ? -30 : 30,
+    scale: 0.5,
+    rotateY: direction > 0 ? 45 : -45,
+    filter: "blur(10px)",
   }),
   center: {
+    zIndex: 1,
     x: 0,
     opacity: 1,
     scale: 1,
     rotateY: 0,
-    transition: { type: 'spring', stiffness: 100, damping: 20, duration: 0.5 }
+    filter: "blur(0px)",
+    transition: {
+      x: { type: "spring", stiffness: 300, damping: 30 },
+      opacity: { duration: 0.4 },
+      scale: { duration: 0.4 },
+      rotateY: { duration: 0.5 }
+    }
   },
   exit: (direction) => ({
-    x: direction < 0 ? 300 : -300,
+    zIndex: 0,
+    x: direction < 0 ? 500 : -500,
     opacity: 0,
-    scale: 0.8,
-    rotateY: direction < 0 ? 30 : -30,
-    transition: { type: 'spring', stiffness: 100, damping: 20, duration: 0.3 }
-  }),
+    scale: 0.5,
+    rotateY: direction < 0 ? 45 : -45,
+    filter: "blur(10px)",
+    transition: { opacity: { duration: 0.3 }, x: { duration: 0.4 } }
+  })
 };
 
 const Testimonials = () => {
-  const [[page, direction], setPage] = useState([0, 0]); // page index and direction of swipe
+  const [[page, direction], setPage] = useState([0, 0]);
 
   const paginate = (newDirection) => {
-    setPage([ (page + newDirection + testimonials.length) % testimonials.length, newDirection ]);
+    setPage([(page + newDirection + testimonials.length) % testimonials.length, newDirection]);
   };
 
-  const currentTestimonial = testimonials[page];
+  const current = testimonials[page];
 
   return (
-    <section className="py-12 px-4 text-center bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100">
-      <h2 className="text-3xl md:text-4xl font-bold mb-8 tracking-tight">What Our Clients Say</h2>
-      <div className="relative max-w-2xl mx-auto h-80 flex items-center justify-center perspective-1000px"> {/* Added perspective for 3D */}
+    <div className="relative w-full py-12 flex flex-col items-center">
+      
+      {/* Header HUD */}
+      <div className="flex items-center gap-4 mb-12 opacity-60">
+        <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-cyan-500" />
+        <span className="text-[10px] font-mono tracking-[0.5em] uppercase text-cyan-400">Neural_Feedback_Relay</span>
+        <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-cyan-500" />
+      </div>
+
+      <div className="relative w-full max-w-4xl h-[450px] flex items-center justify-center perspective-[1200px]">
         <AnimatePresence initial={false} custom={direction} mode="wait">
           <motion.div
-            key={page} // Important for AnimatePresence to detect changes
+            key={page}
             custom={direction}
-            variants={testimonialVariants}
+            variants={cardVariants}
             initial="enter"
             animate="center"
             exit="exit"
-            className="absolute w-full max-w-lg bg-white dark:bg-gray-700 p-6 sm:p-8 rounded-xl shadow-2xl transform-style-preserve-3d"
-            style={{ perspective: '1000px' }} // Apply perspective for 3D effect on children
+            className="absolute w-full max-w-2xl"
           >
-            <img src={currentTestimonial.avatar} alt={currentTestimonial.name} className="w-20 h-20 rounded-full mx-auto mb-4 border-4 border-blue-500 dark:border-blue-400 object-cover"/>
-            <p className="italic text-lg mb-4 leading-relaxed">"{currentTestimonial.quote}"</p>
-            <h4 className="font-semibold text-xl text-blue-600 dark:text-blue-400">{currentTestimonial.name}</h4>
-            <p className="text-sm text-gray-500 dark:text-gray-400">{currentTestimonial.role}</p>
+            {/* The Main Card */}
+            <div className="relative p-1 rounded-3xl bg-gradient-to-br from-white/20 via-transparent to-white/5 backdrop-blur-2xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden">
+              
+              {/* Scanning Light Effect */}
+              <motion.div 
+                animate={{ x: ['-100%', '200%'] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                className="absolute top-0 h-full w-1/2 bg-gradient-to-r from-transparent via-cyan-500/5 to-transparent skew-x-12 pointer-events-none"
+              />
+
+              <div className="relative z-10 p-8 sm:p-12 flex flex-col items-center text-center">
+                
+                {/* Biometric Avatar HUD */}
+                <div className="relative mb-8">
+                  <motion.div 
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                    className="absolute inset-[-12px] border-t-2 border-l-2 border-cyan-500/30 rounded-full"
+                  />
+                  <div className="relative w-24 h-24 rounded-full p-1 border border-white/20 bg-black/40">
+                    <img 
+                      src={current.avatar} 
+                      alt={current.name} 
+                      className="w-full h-full rounded-full object-cover grayscale hover:grayscale-0 transition-all duration-500"
+                    />
+                  </div>
+                  <div className="absolute -bottom-2 -right-2 bg-cyan-500 text-black p-1 rounded-md">
+                    <FiShield size={12} />
+                  </div>
+                </div>
+
+                {/* Quote with Encryption brackets */}
+                <div className="relative mb-8">
+                  <span className="absolute -top-4 -left-4 text-4xl text-cyan-500/30 font-serif">"</span>
+                  <p className="text-xl md:text-2xl text-gray-200 font-light leading-relaxed italic">
+                    {current.quote}
+                  </p>
+                  <span className="absolute -bottom-4 -right-4 text-4xl text-cyan-500/30 font-serif">"</span>
+                </div>
+
+                {/* Metadata HUD */}
+                <div className="space-y-1">
+                  <h4 className="text-xl font-black tracking-tighter text-white uppercase">{current.name}</h4>
+                  <p className="text-[10px] font-mono tracking-[0.3em] text-cyan-500 uppercase">{current.role}</p>
+                </div>
+
+                {/* Bottom Status Bar */}
+                <div className="mt-8 pt-6 border-t border-white/5 w-full flex justify-between items-center text-[8px] font-mono text-gray-500 uppercase tracking-widest">
+                  <div className="flex items-center gap-2">
+                    <FiActivity className="text-cyan-500 animate-pulse" />
+                    Signal: {current.signal}
+                  </div>
+                  <div>Ver_ID: 0x882_{page}</div>
+                </div>
+              </div>
+
+              {/* Decorative HUD Corners */}
+              <div className="absolute top-0 left-0 w-8 h-8 border-t border-l border-white/20 rounded-tl-3xl" />
+              <div className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-white/20 rounded-br-3xl" />
+            </div>
           </motion.div>
         </AnimatePresence>
       </div>
-      <div className="mt-8 flex justify-center gap-4">
-        <motion.button
-          onClick={() => paginate(-1)}
-          className="px-4 py-2 bg-blue-500 dark:bg-blue-600 text-white rounded-full hover:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-transform transform"
-          whileHover={{ scale: 1.1, rotate: -5 }}
-          whileTap={{ scale: 0.9 }}
-        >
-          <FiChevronLeft size={24} />
-        </motion.button>
-        <motion.button
-          onClick={() => paginate(1)}
-          className="px-4 py-2 bg-blue-500 dark:bg-blue-600 text-white rounded-full hover:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-transform transform"
-          whileHover={{ scale: 1.1, rotate: 5 }}
-          whileTap={{ scale: 0.9 }}
-        >
-          <FiChevronRight size={24} />
-        </motion.button>
+
+      {/* --- CONTROLS --- */}
+      <div className="mt-12 flex flex-col items-center gap-6">
+        <div className="flex items-center gap-8">
+          <motion.button
+            whileHover={{ scale: 1.1, x: -5 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => paginate(-1)}
+            className="w-14 h-14 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white hover:border-cyan-500/50 hover:bg-cyan-500/5 transition-all"
+          >
+            <FiChevronLeft size={24} />
+          </motion.button>
+
+          {/* Dots Indicator */}
+          <div className="flex gap-3">
+            {testimonials.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setPage([i, i > page ? 1 : -1])}
+                className={`h-1 transition-all duration-500 rounded-full ${
+                  page === i ? 'w-8 bg-cyan-500' : 'w-2 bg-white/10 hover:bg-white/30'
+                }`}
+              />
+            ))}
+          </div>
+
+          <motion.button
+            whileHover={{ scale: 1.1, x: 5 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => paginate(1)}
+            className="w-14 h-14 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white hover:border-cyan-500/50 hover:bg-cyan-500/5 transition-all"
+          >
+            <FiChevronRight size={24} />
+          </motion.button>
+        </div>
+
+        <div className="flex items-center gap-2 text-[9px] font-mono text-gray-600 tracking-[0.4em] uppercase">
+          <FiTerminal /> Manual_Override_Enabled
+        </div>
       </div>
-       {/* Optional: Dots for navigation */}
-      <div className="flex justify-center gap-2 mt-6">
-        {testimonials.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setPage([i, i > page ? 1 : -1])}
-            className={`w-3 h-3 rounded-full transition-all duration-300
-                        ${page === i ? 'bg-blue-500 scale-125' : 'bg-gray-300 dark:bg-gray-600 hover:bg-gray-400'}`}
-            aria-label={`Go to testimonial ${i + 1}`}
-          />
-        ))}
-      </div>
-    </section>
+    </div>
   );
 };
 
