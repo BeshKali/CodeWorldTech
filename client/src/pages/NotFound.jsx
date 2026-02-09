@@ -148,7 +148,7 @@ const NotFound = () => {
           className="mt-20 w-full max-w-2xl border-t border-white/5 pt-6 hidden md:flex justify-between items-center text-[8px] font-mono uppercase tracking-[0.3em]"
         >
           <div className="flex items-center gap-2">
-            <FiTerminal /> Trace_Route: [0x000] -> [VOID]
+            <FiTerminal /> Trace_Route: [0x000] - [VOID]
           </div>
           <div>Uptime: 99.99%</div>
           <div className="text-cyan-500 animate-pulse">Scanning_For_Input...</div>

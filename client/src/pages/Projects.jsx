@@ -36,7 +36,7 @@ const projects = [
     desc: "AI-driven livestock management system. Optimizing productivity through predictive health analytics and real-time market integration.",
     stack: ["React", "Node.js", "M-Pesa API", "MongoDB"],
     imageUrl: "https://images.unsplash.com/photo-1522199755839-a2bacb67c546?auto=format&fit=crop&w=800&q=80",
-    liveLink: "#",
+    liveLink: "https://mifugosmart.vercel.app/",
     repoLink: "#",
     status: "98% Optimized"
   },
@@ -46,7 +46,7 @@ const projects = [
     desc: "Neural-support chatbot interface leveraging Twilio and NLP to bridge the gap between patient urgency and clinical response.",
     stack: ["Python", "Dialogflow", "Twilio", "Firebase"],
     imageUrl: "https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=800&q=80",
-    liveLink: "#",
+    liveLink: "https://care-connect-sage.vercel.app/",
     repoLink: "#",
     status: "Active Uplink"
   },
