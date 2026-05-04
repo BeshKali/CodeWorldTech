@@ -1,12 +1,15 @@
-// src/components/ThemeToggle.jsx
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiSun, FiMoon, FiZap } from 'react-icons/fi';
 
 const ThemeToggle = () => {
-  const [theme, setTheme] = useState(() =>
-    localStorage.theme === 'dark' ? 'dark' : 'light'
-  );
+  // Set Dark Theme as the absolute default
+  const [theme, setTheme] = useState(() => {
+    if (typeof window !== 'undefined' && localStorage.theme === 'dark') {
+      return 'dark';
+    }
+    return 'light'; 
+  });
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
@@ -19,7 +22,7 @@ const ThemeToggle = () => {
     <div className="flex items-center gap-3">
       {/* HUD Mode Label */}
       <div className="hidden lg:flex flex-col items-end">
-        <span className="text-[7px] font-mono tracking-[0.3em] text-gray-500 uppercase leading-none mb-1">
+        <span className="text-[7px] font-mono tracking-[0.3em] text-gray-500 dark:text-gray-400 uppercase leading-none mb-1 transition-colors">
           Mode_Protocol
         </span>
         <AnimatePresence mode="wait">
@@ -28,8 +31,9 @@ const ThemeToggle = () => {
             initial={{ opacity: 0, x: 5 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -5 }}
+            // Changed light theme text to amber-600 for high visibility/contrast
             className={`text-[9px] font-mono font-bold uppercase tracking-widest ${
-              theme === 'dark' ? 'text-purple-400' : 'text-cyan-500'
+              theme === 'dark' ? 'text-purple-400' : 'text-amber-600'
             }`}
           >
             {theme === 'dark' ? 'Dark_Matter' : 'Solar_Energy'}
@@ -42,10 +46,11 @@ const ThemeToggle = () => {
         onClick={toggleTheme}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
+        // Adjusted light mode to a clean white track with inner shadow for better modern UI
         className={`relative w-14 h-7 rounded-full p-1 transition-all duration-500 border ${
           theme === 'dark' 
-            ? 'bg-purple-950/20 border-purple-500/30 shadow-[0_0_15px_rgba(168,85,247,0.15)]' 
-            : 'bg-cyan-950/20 border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.15)]'
+            ? 'bg-purple-950/30 border-purple-500/30 shadow-[0_0_15px_rgba(168,85,247,0.15)]' 
+            : 'bg-white border-gray-200 shadow-inner'
         } backdrop-blur-md overflow-hidden`}
         aria-label="Toggle System Mode"
       >
@@ -53,7 +58,9 @@ const ThemeToggle = () => {
         <motion.div
           animate={{ x: ['-100%', '200%'] }}
           transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-          className="absolute inset-y-0 w-1/2 bg-gradient-to-r from-transparent via-white/5 to-transparent skew-x-12"
+          className={`absolute inset-y-0 w-1/2 skew-x-12 bg-gradient-to-r from-transparent ${
+            theme === 'dark' ? 'via-white/10' : 'via-gray-400/10'
+          } to-transparent`}
         />
 
         {/* The Animated Knob */}
@@ -64,11 +71,11 @@ const ThemeToggle = () => {
             className={`relative w-5 h-5 rounded-full flex items-center justify-center shadow-lg ${
               theme === 'dark' 
                 ? 'bg-purple-500 shadow-purple-500/50' 
-                : 'bg-cyan-500 shadow-cyan-500/50'
+                : 'bg-amber-500 shadow-amber-500/40' // Bright sun aesthetic for light mode
             }`}
           >
             {/* Knob Glow */}
-            <div className="absolute inset-0 rounded-full blur-md opacity-50 bg-inherit" />
+            <div className="absolute inset-0 rounded-full blur-[5px] opacity-60 bg-inherit" />
             
             <AnimatePresence mode="wait">
               <motion.div
@@ -91,8 +98,8 @@ const ThemeToggle = () => {
       </motion.button>
 
       {/* Auxiliary Icon */}
-      <div className={`transition-colors duration-500 ${theme === 'dark' ? 'text-purple-500' : 'text-cyan-500'}`}>
-        <FiZap size={14} className={theme === 'dark' ? 'animate-pulse' : ''} />
+      <div className={`transition-colors duration-500 ${theme === 'dark' ? 'text-purple-400 animate-pulse' : 'text-amber-500'}`}>
+        <FiZap size={14} />
       </div>
     </div>
   );
