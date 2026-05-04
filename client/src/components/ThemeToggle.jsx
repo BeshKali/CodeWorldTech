@@ -8,7 +8,8 @@ const ThemeToggle = () => {
     if (typeof window !== 'undefined' && localStorage.theme === 'dark') {
       return 'dark';
     }
-    return 'light'; 
+    // Default to dark theme for a more modern, sleek UI-
+    return 'dark'; //- if you want light theme just update the line from "dark" to "light"
   });
 
   useEffect(() => {
