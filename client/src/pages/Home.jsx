@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { FiPlay, FiX, FiCpu, FiGlobe, FiZap, FiActivity, FiShield, FiMonitor, FiDatabase } from 'react-icons/fi';
 
+import vid from '../assets/CWT.mp4'; // Ensure you have this video in your assets folder
 // --- 3D Tilt Wrapper Component ---
 const TiltCard = ({ children }) => {
   const x = useMotionValue(0);
@@ -149,7 +150,7 @@ const Home = () => {
                 className="w-full aspect-video object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-700"
               >
                 {/* Assuming you named your circuit video "circuit-bg.mp4" in your public folder */}
-                <source src="/circuit-bg.mp4" type="video/mp4" />
+                <source src="../assets/CWT.mp4" type="video/mp4" />
                 {/* Fallback image if video fails */}
                 <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070" alt="Tech Background" />
               </video>
@@ -211,7 +212,7 @@ const Home = () => {
             >
                {/* Place the full version or a different demo video here */}
                <video autoPlay controls className="w-full h-full">
-                  <source src="/circuit-bg.mp4" type="video/mp4" />
+                  <source src={vid} type="video/mp4" />
                </video>
             </motion.div>
           </motion.div>
