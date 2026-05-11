@@ -1,7 +1,7 @@
 // src/components/Testimonials.jsx
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiChevronLeft, FiChevronRight, FiActivity, FiShield, FiTerminal } from 'react-icons/fi';
+import { FiChevronLeft, FiChevronRight, FiActivity, FiShield, FiTerminal, FiDatabase, FiCpu } from 'react-icons/fi';
 
 const testimonials = [
   { 
@@ -10,7 +10,8 @@ const testimonials = [
     role: "Founder, NexaStream", 
     quote: "The deployment speed was unprecedented. They turned a complex vision into a high-performance reality in record time.", 
     avatar: "https://img.freepik.com/free-photo/african-senior-woman_23-2148833112.jpg",
-    signal: "98% Efficiency"
+    signal: "98% Efficiency",
+    node: "NX_GATEWAY_04"
   },
   { 
     id: 2, 
@@ -18,7 +19,8 @@ const testimonials = [
     role: "CTO, AgriPulse", 
     quote: "The inventory logic and real-time analytics have completely transformed our operational oversight. Pure engineering brilliance.", 
     avatar: "https://img.freepik.com/free-photo/handsome-sensitive-man-portrait_23-2149509828.jpg",
-    signal: "Verified Node"
+    signal: "Verified Node",
+    node: "AP_CORE_ALPHA"
   },
   { 
     id: 3, 
@@ -26,16 +28,17 @@ const testimonials = [
     role: "Admin, HealthBridge", 
     quote: "Finally, a platform that understands the nuance of medical data security while maintaining a fluid user experience.", 
     avatar: "https://img.freepik.com/free-photo/medium-shot-beautiful-african-woman-posing_23-2151438119.jpg",
-    signal: "Secured Uplink"
+    signal: "Secured Uplink",
+    node: "HB_ENCRYPT_L2"
   },
 ];
 
 const cardVariants = {
   enter: (direction) => ({
-    x: direction > 0 ? 500 : -500,
+    x: direction > 0 ? 300 : -300,
     opacity: 0,
-    scale: 0.5,
-    rotateY: direction > 0 ? 45 : -45,
+    scale: 0.8,
+    rotateY: direction > 0 ? 30 : -30,
     filter: "blur(10px)",
   }),
   center: {
@@ -46,7 +49,7 @@ const cardVariants = {
     rotateY: 0,
     filter: "blur(0px)",
     transition: {
-      x: { type: "spring", stiffness: 300, damping: 30 },
+      x: { type: "spring", stiffness: 200, damping: 25 },
       opacity: { duration: 0.4 },
       scale: { duration: 0.4 },
       rotateY: { duration: 0.5 }
@@ -54,10 +57,10 @@ const cardVariants = {
   },
   exit: (direction) => ({
     zIndex: 0,
-    x: direction < 0 ? 500 : -500,
+    x: direction < 0 ? 300 : -300,
     opacity: 0,
-    scale: 0.5,
-    rotateY: direction < 0 ? 45 : -45,
+    scale: 0.8,
+    rotateY: direction < 0 ? 30 : -30,
     filter: "blur(10px)",
     transition: { opacity: { duration: 0.3 }, x: { duration: 0.4 } }
   })
@@ -73,16 +76,19 @@ const Testimonials = () => {
   const current = testimonials[page];
 
   return (
-    <div className="relative w-full py-12 flex flex-col items-center">
+    <div className="relative w-full py-16 flex flex-col items-center">
       
-      {/* Header HUD */}
-      <div className="flex items-center gap-4 mb-12 opacity-60">
-        <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-cyan-500" />
-        <span className="text-[10px] font-mono tracking-[0.5em] uppercase text-cyan-400">Neural_Feedback_Relay</span>
-        <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-cyan-500" />
+      {/* --- HEADER HUD --- */}
+      <div className="flex flex-col items-center gap-2 mb-16">
+        <div className="flex items-center gap-4">
+          <div className="h-[1px] w-8 bg-gradient-to-r from-transparent to-blue-500" />
+          <span className="text-[10px] font-mono tracking-[0.5em] uppercase text-blue-600 dark:text-blue-400 font-black">Incoming_Relay_Data</span>
+          <div className="h-[1px] w-8 bg-gradient-to-l from-transparent to-blue-500" />
+        </div>
+        <div className="text-[9px] font-mono text-gray-400 uppercase tracking-widest opacity-50">Archive_0x{current.id}77_Stable</div>
       </div>
 
-      <div className="relative w-full max-w-4xl h-[450px] flex items-center justify-center perspective-[1200px]">
+      <div className="relative w-full max-w-5xl h-[480px] flex items-center justify-center perspective-[2000px]">
         <AnimatePresence initial={false} custom={direction} mode="wait">
           <motion.div
             key={page}
@@ -91,111 +97,119 @@ const Testimonials = () => {
             initial="enter"
             animate="center"
             exit="exit"
-            className="absolute w-full max-w-2xl"
+            className="absolute w-full max-w-3xl"
           >
-            {/* The Main Card */}
-            <div className="relative p-1 rounded-3xl bg-gradient-to-br from-white/20 via-transparent to-white/5 backdrop-blur-2xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden">
+            {/* --- MAIN GLASS CARD --- */}
+            <div className="relative p-[1px] rounded-[3rem] bg-gradient-to-br from-blue-500/20 via-transparent to-indigo-500/20 backdrop-blur-3xl overflow-hidden group">
               
-              {/* Scanning Light Effect */}
-              <motion.div 
-                animate={{ x: ['-100%', '200%'] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                className="absolute top-0 h-full w-1/2 bg-gradient-to-r from-transparent via-cyan-500/5 to-transparent skew-x-12 pointer-events-none"
-              />
-
-              <div className="relative z-10 p-8 sm:p-12 flex flex-col items-center text-center">
+              <div className="relative z-10 bg-white/70 dark:bg-[#080808]/90 rounded-[3rem] p-8 md:p-16 flex flex-col md:flex-row gap-12 items-center border border-black/5 dark:border-white/5 shadow-2xl">
                 
                 {/* Biometric Avatar HUD */}
-                <div className="relative mb-8">
+                <div className="relative flex-shrink-0">
                   <motion.div 
                     animate={{ rotate: 360 }}
-                    transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                    className="absolute inset-[-12px] border-t-2 border-l-2 border-cyan-500/30 rounded-full"
+                    transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+                    className="absolute inset-[-15px] border-t-2 border-l border-blue-500/20 rounded-full"
                   />
-                  <div className="relative w-24 h-24 rounded-full p-1 border border-white/20 bg-black/40">
+                  <motion.div 
+                    animate={{ rotate: -360 }}
+                    transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                    className="absolute inset-[-8px] border-b-2 border-r border-indigo-500/30 rounded-full"
+                  />
+                  <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full p-1.5 bg-gradient-to-tr from-blue-600 to-indigo-400">
                     <img 
                       src={current.avatar} 
                       alt={current.name} 
-                      className="w-full h-full rounded-full object-cover grayscale hover:grayscale-0 transition-all duration-500"
+                      className="w-full h-full rounded-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 border-4 border-black/10 dark:border-white/10"
                     />
                   </div>
-                  <div className="absolute -bottom-2 -right-2 bg-cyan-500 text-black p-1 rounded-md">
-                    <FiShield size={12} />
+                  <div className="absolute top-2 right-2 bg-blue-600 text-white w-8 h-8 rounded-lg flex items-center justify-center shadow-lg animate-pulse">
+                    <FiShield size={16} />
                   </div>
                 </div>
 
-                {/* Quote with Encryption brackets */}
-                <div className="relative mb-8">
-                  <span className="absolute -top-4 -left-4 text-4xl text-cyan-500/30 font-serif">"</span>
-                  <p className="text-xl md:text-2xl text-gray-200 font-light leading-relaxed italic">
-                    {current.quote}
-                  </p>
-                  <span className="absolute -bottom-4 -right-4 text-4xl text-cyan-500/30 font-serif">"</span>
-                </div>
-
-                {/* Metadata HUD */}
-                <div className="space-y-1">
-                  <h4 className="text-xl font-black tracking-tighter text-white uppercase">{current.name}</h4>
-                  <p className="text-[10px] font-mono tracking-[0.3em] text-cyan-500 uppercase">{current.role}</p>
-                </div>
-
-                {/* Bottom Status Bar */}
-                <div className="mt-8 pt-6 border-t border-white/5 w-full flex justify-between items-center text-[8px] font-mono text-gray-500 uppercase tracking-widest">
-                  <div className="flex items-center gap-2">
-                    <FiActivity className="text-cyan-500 animate-pulse" />
-                    Signal: {current.signal}
+                {/* Content Section */}
+                <div className="flex-grow flex flex-col items-center md:items-start text-center md:text-left">
+                  <div className="flex items-center gap-3 mb-6">
+                    <FiDatabase className="text-blue-500 opacity-50" />
+                    <span className="text-[10px] font-mono text-gray-400 tracking-[0.3em] uppercase">Status: {current.signal}</span>
                   </div>
-                  <div>Ver_ID: 0x882_{page}</div>
+
+                  <div className="relative mb-8">
+                    <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-200 font-light leading-relaxed italic tracking-tight">
+                      "{current.quote}"
+                    </p>
+                  </div>
+
+                  <div className="space-y-1">
+                    <h4 className="text-3xl font-black tracking-tighter uppercase text-blue-600 dark:text-white">
+                      {current.name}
+                    </h4>
+                    <p className="text-[11px] font-mono tracking-[0.4em] text-indigo-500 uppercase font-bold">
+                      {current.role}
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              {/* Decorative HUD Corners */}
-              <div className="absolute top-0 left-0 w-8 h-8 border-t border-l border-white/20 rounded-tl-3xl" />
-              <div className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-white/20 rounded-br-3xl" />
+              {/* Technical HUD Corners */}
+              <div className="absolute top-8 left-8 text-blue-500/20"><FiCpu size={40} /></div>
+              <div className="absolute bottom-10 right-10 text-indigo-500/20 font-mono text-[8px] tracking-[1em] vertical-text">ENCRYPT_DATA</div>
             </div>
           </motion.div>
         </AnimatePresence>
       </div>
 
-      {/* --- CONTROLS --- */}
-      <div className="mt-12 flex flex-col items-center gap-6">
-        <div className="flex items-center gap-8">
+      {/* --- CONTROLS RE-ENGINEERED --- */}
+      <div className="mt-16 flex flex-col items-center gap-10">
+        <div className="flex items-center gap-12">
           <motion.button
-            whileHover={{ scale: 1.1, x: -5 }}
+            whileHover={{ scale: 1.1, x: -8 }}
             whileTap={{ scale: 0.9 }}
             onClick={() => paginate(-1)}
-            className="w-14 h-14 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white hover:border-cyan-500/50 hover:bg-cyan-500/5 transition-all"
+            className="w-16 h-16 flex items-center justify-center rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-gray-500 dark:text-white hover:border-blue-500 hover:text-blue-500 transition-all shadow-xl backdrop-blur-md"
           >
-            <FiChevronLeft size={24} />
+            <FiChevronLeft size={28} />
           </motion.button>
 
-          {/* Dots Indicator */}
-          <div className="flex gap-3">
+          {/* Progress Indicators */}
+          <div className="flex gap-4">
             {testimonials.map((_, i) => (
               <button
                 key={i}
                 onClick={() => setPage([i, i > page ? 1 : -1])}
-                className={`h-1 transition-all duration-500 rounded-full ${
-                  page === i ? 'w-8 bg-cyan-500' : 'w-2 bg-white/10 hover:bg-white/30'
-                }`}
-              />
+                className="group relative flex flex-col items-center gap-2"
+              >
+                <span className={`text-[8px] font-mono font-bold transition-colors ${page === i ? 'text-blue-500' : 'text-gray-400 opacity-0 group-hover:opacity-100'}`}>0{i+1}</span>
+                <div className={`h-1.5 transition-all duration-500 rounded-full ${
+                  page === i ? 'w-12 bg-blue-600 shadow-[0_0_15px_rgba(37,99,235,0.6)]' : 'w-4 bg-gray-300 dark:bg-white/10'
+                }`} />
+              </button>
             ))}
           </div>
 
           <motion.button
-            whileHover={{ scale: 1.1, x: 5 }}
+            whileHover={{ scale: 1.1, x: 8 }}
             whileTap={{ scale: 0.9 }}
             onClick={() => paginate(1)}
-            className="w-14 h-14 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-white hover:border-cyan-500/50 hover:bg-cyan-500/5 transition-all"
+            className="w-16 h-16 flex items-center justify-center rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-gray-500 dark:text-white hover:border-blue-500 hover:text-blue-500 transition-all shadow-xl backdrop-blur-md"
           >
-            <FiChevronRight size={24} />
+            <FiChevronRight size={28} />
           </motion.button>
         </div>
 
-        <div className="flex items-center gap-2 text-[9px] font-mono text-gray-600 tracking-[0.4em] uppercase">
-          <FiTerminal /> Manual_Override_Enabled
+        <div className="flex items-center gap-4 px-6 py-2 rounded-full border border-black/5 dark:border-white/5 bg-black/[0.02] dark:bg-white/[0.02] text-[9px] font-mono text-gray-400 tracking-[0.3em] uppercase">
+          <FiTerminal className="text-blue-500" /> 
+          Node_Location: <span className="text-blue-500 font-black">{current.node}</span>
         </div>
       </div>
+
+      <style jsx>{`
+        .vertical-text {
+          writing-mode: vertical-rl;
+          text-orientation: mixed;
+        }
+      `}</style>
     </div>
   );
 };
