@@ -193,7 +193,7 @@ const About = () => {
                 <div className="flex flex-col items-center text-center">
                   <div className="relative mb-8">
                     <div className="w-32 h-32 rounded-3xl overflow-hidden border-2 border-blue-600/20 p-2 bg-white dark:bg-white/5">
-                      <img src={founder.image} alt={founder.name} className="w-full h-full object-cover rounded-2xl grayscale group-hover:grayscale-0 transition-all duration-700" />
+                      <img src={founder.image} alt={founder.name} className="w-full h-full object-cover rounded-2xl grayscale-0 group-hover:grayscale-0 transition-all duration-700" />
                     </div>
                     <div className="absolute -bottom-2 -right-2 bg-blue-600 text-white w-8 h-8 rounded-xl flex items-center justify-center shadow-lg">
                       <FiShield size={14} />
